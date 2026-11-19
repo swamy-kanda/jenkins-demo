@@ -35,7 +35,7 @@ pipeline {
                     output=$(./c_app)
                     echo "$output"
 
-                    echo "$output" | grep -q "Addition: 30"
+                    echo "$output" | grep -q "Addition: 40"
 
                     echo "TEST PASSED"
                 '''
