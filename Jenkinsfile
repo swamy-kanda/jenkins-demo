@@ -54,11 +54,11 @@ pipeline {
                         env.CFLAGS = '-O2'
                     }
                     else{
-                        env.CFLAGS = '-OO'
+                        env.SWA = '-Wextra'
                     }
                 }
 
-                sh 'gcc -Wall -Wextra -Werror $CFLAGS -o c_app main.c'
+                sh 'gcc -Wall $SWA -Werror $CFLAGS -o c_app main.c'
             }
         }
 
