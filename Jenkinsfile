@@ -14,7 +14,7 @@ pipeline {
 
         choice(
             name: 'BUILD_TYPE',
-            choices: ['Debug', 'Release'],
+            choices: ['Debug', 'Release','swamy'],
             description: 'Select build configuration'
         )
 
@@ -50,8 +50,11 @@ pipeline {
                 script {
                     if (params.BUILD_TYPE == 'Debug') {
                         env.CFLAGS = '-g -O0'
-                    } else {
+                    } else if(params.BUILD_TYPE == 'Release') {
                         env.CFLAGS = '-O2'
+                    }
+                    else{
+                        env.CFLAGS = '-OO'
                     }
                 }
 
