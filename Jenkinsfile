@@ -111,7 +111,7 @@ pipeline {
             echo 'Build completed successfully!'
 
             archiveArtifacts(
-                artifacts: 'c_app',
+                artifacts: 'c_app,test-reports/results.xml',
                 fingerprint: true
             )
         }
