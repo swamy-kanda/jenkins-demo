@@ -66,17 +66,16 @@ pipeline {
 
         stage('Test C Application') {
             steps {
-		sh '''
-            output=$(./c_app)
-            echo "$output"
+                sh '''
+                    output=$(./c_app)
+                    echo "$output"
 
-            echo "$output" | grep -q "Hello from Jenkins Poll SCM!"
+                    echo "$output" | grep -q "Hello from Jenkins Poll SCM!"
 
-            echo "C TEST PASSED"
-        '''
+                    echo "C TEST PASSED"
+                '''
+            }
         }
-
-        // C Unit Testing
 
         stage('Run Unit Tests') {
             steps {
@@ -84,15 +83,11 @@ pipeline {
             }
         }
 
-        // Publish JUnit XML Report
-
         stage('Publish Test Report') {
             steps {
                 junit 'test-reports/results.xml'
             }
         }
-
-        // Python Application
 
         stage('Check Python') {
             steps {
@@ -108,6 +103,7 @@ pipeline {
     }
 
     post {
+
         success {
             echo 'Build completed successfully!'
 
