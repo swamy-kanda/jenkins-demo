@@ -75,6 +75,24 @@ pipeline {
             }
         }
 
+        // C Unit Testing
+
+        stage('Run Unit Tests') {
+            steps {
+                sh './run_tests.sh'
+            }
+        }
+
+        // Publish JUnit XML Report
+
+        stage('Publish Test Report') {
+            steps {
+                junit 'test-reports/results.xml'
+            }
+        }
+
+        // Python Application
+
         stage('Check Python') {
             steps {
                 sh 'python3 --version'
@@ -91,6 +109,7 @@ pipeline {
     post {
         success {
             echo 'Build completed successfully!'
+
             archiveArtifacts(
                 artifacts: 'c_app',
                 fingerprint: true
