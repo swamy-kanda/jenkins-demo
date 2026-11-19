@@ -66,13 +66,14 @@ pipeline {
 
         stage('Test C Application') {
             steps {
-                sh '''
-                    output=$(./c_app)
-                    echo "$output"
-                    echo "$output" | grep -q "Addition: 30"
-                    echo "C TEST PASSED"
-                '''
-            }
+		sh '''
+            output=$(./c_app)
+            echo "$output"
+
+            echo "$output" | grep -q "Hello from Jenkins Poll SCM!"
+
+            echo "C TEST PASSED"
+        '''
         }
 
         // C Unit Testing
