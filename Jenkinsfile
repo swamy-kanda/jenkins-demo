@@ -3,13 +3,13 @@ pipeline {
 
     agent any
 
-    // Environment variables
+    // Environment Variables
     environment {
         APP_NAME = 'embedded_c_app'
         VERSION = '1.0'
     }
 
-    // User inputs
+    // Build Parameters
     parameters {
 
         choice(
@@ -21,12 +21,13 @@ pipeline {
         string(
             name: 'BUILD_MESSAGE',
             defaultValue: 'Hello from Jenkins',
-            description: 'Enter a build message'
+            description: 'Enter build message'
         )
     }
 
     stages {
 
+        // Display Build Information
         stage('Build Information') {
             steps {
                 echo "Application: ${env.APP_NAME}"
@@ -36,13 +37,15 @@ pipeline {
             }
         }
 
+        // C Application Pipeline
+
         stage('Check GCC') {
             steps {
                 sh 'gcc --version'
             }
         }
 
-        stage('Compile') {
+        stage('Compile C') {
             steps {
                 script {
                     if (params.BUILD_TYPE == 'Debug') {
@@ -56,31 +59,57 @@ pipeline {
             }
         }
 
-        stage('Run Application') {
+        stage('Run C Application') {
             steps {
                 sh './c_app'
             }
         }
 
-        stage('Test') {
+        stage('Test C Application') {
             steps {
                 sh '''
                     output=$(./c_app)
                     echo "$output"
+
                     echo "$output" | grep -q "Addition: 30"
-                    echo "TEST PASSED"
+
+                    echo "C TEST PASSED"
+                '''
+            }
+        }
+
+        // Python Application Pipeline
+
+        stage('Check Python') {
+            steps {
+                sh 'python3 --version'
+            }
+        }
+
+        stage('Run Python Application') {
+            steps {
+                sh '''
+                    echo "$BUILD_MESSAGE"
+                    python3 avinash.py
                 '''
             }
         }
     }
 
+    // Post Build Actions
+
     post {
+
         success {
-            echo 'Build completed successfully!'
+            echo 'C and Python applications completed successfully!'
         }
 
         failure {
-            echo 'Build failed!'
+            echo 'C or Python application pipeline failed!'
+        }
+
+        always {
+            echo 'Jenkins pipeline execution completed.'
         }
     }
 }
