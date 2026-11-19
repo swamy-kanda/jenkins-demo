@@ -3,18 +3,15 @@ pipeline {
 
     agent any
 
-    // Environment Variables
     environment {
         APP_NAME = 'embedded_c_app'
         VERSION = '1.0'
     }
 
-    // Build Parameters
     parameters {
-
         choice(
             name: 'BUILD_TYPE',
-            choices: ['Debug', 'Release','swamy'],
+            choices: ['Debug', 'Release', 'swamy'],
             description: 'Select build configuration'
         )
 
@@ -27,7 +24,6 @@ pipeline {
 
     stages {
 
-        // Display Build Information
         stage('Build Information') {
             steps {
                 echo "Application: ${env.APP_NAME}"
@@ -36,8 +32,6 @@ pipeline {
                 echo "Message: ${params.BUILD_MESSAGE}"
             }
         }
-
-        // C Application Pipeline
 
         stage('Check GCC') {
             steps {
@@ -50,10 +44,12 @@ pipeline {
                 script {
                     if (params.BUILD_TYPE == 'Debug') {
                         env.CFLAGS = '-g -O0'
-                    } else if(params.BUILD_TYPE == 'Release') {
+                        env.SWA = ''
+                    } else if (params.BUILD_TYPE == 'Release') {
                         env.CFLAGS = '-O2'
-                    }
-                    else{
+                        env.SWA = ''
+                    } else {
+                        env.CFLAGS = '-O0'
                         env.SWA = '-Wextra'
                     }
                 }
@@ -73,15 +69,11 @@ pipeline {
                 sh '''
                     output=$(./c_app)
                     echo "$output"
-
                     echo "$output" | grep -q "Addition: 30"
-
                     echo "C TEST PASSED"
                 '''
             }
         }
-
-        // Python Application Pipeline
 
         stage('Check Python') {
             steps {
@@ -91,24 +83,22 @@ pipeline {
 
         stage('Run Python Application') {
             steps {
-                sh '''
-                    echo "$BUILD_MESSAGE"
-                    python3 avinash.py
-                '''
+                sh 'python3 avinash.py'
             }
         }
     }
 
-    // Post Build Actions
-
     post {
-
         success {
-            echo 'C and Python applications completed successfully!'
+            echo 'Build completed successfully!'
+            archiveArtifacts(
+                artifacts: 'c_app',
+                fingerprint: true
+            )
         }
 
         failure {
-            echo 'C or Python application pipeline failed!'
+            echo 'Build failed!'
         }
 
         always {
